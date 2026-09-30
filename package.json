@@ -11,6 +11,7 @@
     "simulate": "node src/simulate.mjs",
     "simulate:offline": "node src/simulate.mjs --offline",
     "personas:nvidia": "node scripts/fetch-nemotron-korea.mjs",
+    "dashboard": "node scripts/serve-dashboard.mjs",
     "test": "node --test"
   },
   "license": "MIT"

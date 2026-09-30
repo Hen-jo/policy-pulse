@@ -41,6 +41,18 @@ demographics, interests, policy costs, and benefits.
 
 Node.js 20+ is required.
 
+To preview the visible policy workspace locally:
+
+```bash
+npm run dashboard
+# open http://localhost:4173
+```
+
+The dashboard is an interactive browser preview: changing benefit, cost, or
+coverage moves the support-rate chart and orientation breakdown immediately.
+It is intentionally labeled as a preview until a live Jev run replaces the
+deterministic browser estimate with a model response.
+
 ```bash
 npm run test
 npm run personas:nvidia -- --count=12 --offset=100
