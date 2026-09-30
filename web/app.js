@@ -14,13 +14,14 @@ const broadWords = ['모든', '전 시민', '전국민', '전 국민', '무상',
 
 const $ = (id) => document.getElementById(id);
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+let selectedRegion = 'daejeon';
 
 function countMatches(text, words) {
   return words.reduce((count, word) => count + (text.includes(word) ? 1 : 0), 0);
 }
 
 function analyze() {
-  const region = regionData[$('regionSelect').value];
+  const region = regionData[selectedRegion];
   const text = $('policyInput').value.trim();
   const benefits = countMatches(text, positiveWords);
   const burdens = countMatches(text, burdenWords);
@@ -66,6 +67,14 @@ function render() {
   drawSparkline(result);
 }
 
-['regionSelect', 'policyInput'].forEach((id) => $(id).addEventListener('input', render));
+document.querySelectorAll('.region-option').forEach((button) => {
+  button.addEventListener('click', () => {
+    selectedRegion = button.dataset.region;
+    document.querySelectorAll('.region-option').forEach((option) => option.classList.toggle('active', option === button));
+    render();
+  });
+});
+
+['policyInput'].forEach((id) => $(id).addEventListener('input', render));
 $('policyForm').addEventListener('submit', (event) => { event.preventDefault(); render(); });
 render();

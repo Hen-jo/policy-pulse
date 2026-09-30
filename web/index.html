@@ -27,8 +27,16 @@
         <section class="simulator" aria-label="공약 변화율 시뮬레이터">
           <form class="input-panel" id="policyForm">
             <div class="step-label"><span>01</span> 분석 조건</div>
-            <label for="regionSelect">분석 지역</label>
-            <div class="select-wrap"><select id="regionSelect"><option value="daejeon">대전광역시</option><option value="seoul">서울특별시</option><option value="busan">부산광역시</option><option value="daegu">대구광역시</option><option value="incheon">인천광역시</option><option value="gwangju">광주광역시</option><option value="sejong">세종특별자치시</option></select><span>⌄</span></div>
+            <label>분석 지역</label>
+            <div class="region-options" id="regionOptions" role="radiogroup" aria-label="분석 지역 선택">
+              <button type="button" class="region-option active" data-region="daejeon">대전광역시</button>
+              <button type="button" class="region-option" data-region="seoul">서울특별시</button>
+              <button type="button" class="region-option" data-region="busan">부산광역시</button>
+              <button type="button" class="region-option" data-region="daegu">대구광역시</button>
+              <button type="button" class="region-option" data-region="incheon">인천광역시</button>
+              <button type="button" class="region-option" data-region="gwangju">광주광역시</button>
+              <button type="button" class="region-option" data-region="sejong">세종특별자치시</button>
+            </div>
 
             <label for="policyInput">공약</label>
             <textarea id="policyInput" rows="7" placeholder="예: 청년 대중교통 이용액을 월 3만원까지 환급합니다.">청년 대중교통 이용액을 월 3만원까지 환급합니다.</textarea>
