@@ -52,7 +52,8 @@ The dashboard is an interactive browser preview: choose a region and type a
 policy sentence to see the current baseline, proposed support rate, and
 orientation breakdown update immediately. It is intentionally labeled as a
 preview until a live Jev run replaces the deterministic browser estimate with
-a model response.
+a model response. The region panel uses Leaflet with OpenStreetMap tiles so
+the selected region is shown on a real map rather than a schematic illustration.
 
 ```bash
 npm run test

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3JRj7j2u3FJs9wN7fW8hL7P3g4B5k=" crossorigin="" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -28,6 +29,8 @@
           <form class="input-panel" id="policyForm">
             <div class="step-label"><span>01</span> 분석 조건</div>
             <label>분석 지역</label>
+            <div id="realMap" class="real-map" aria-label="실제 지도"></div>
+            <div class="map-meta"><span id="mapLabel">대전광역시 지도</span><span>© OpenStreetMap</span></div>
             <div class="region-options" id="regionOptions" role="radiogroup" aria-label="분석 지역 선택">
               <button type="button" class="region-option active" data-region="daejeon">대전광역시</button>
               <button type="button" class="region-option" data-region="seoul">서울특별시</button>
@@ -61,6 +64,7 @@
         <footer><span>대전 기준 · Nemotron 합성 페르소나 · 인구·선거결과 보정</span><span class="footer-right">여론조사·선거예측 아님</span></footer>
       </main>
     </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script type="module" src="/app.js"></script>
   </body>
 </html>
