@@ -1,0 +1,10 @@
+[
+  {
+    "id": "transit-credit-2026",
+    "title": "대중교통 정액 환급제",
+    "summary": "월별 대중교통 이용액의 일정 금액을 환급하는 정책",
+    "benefits": ["commute cost relief", "better access to jobs and education", "public transit usage"],
+    "costs": ["public budget", "eligibility administration", "possible tax pressure"],
+    "target_groups": ["commuters", "students", "low-income households"]
+  }
+]

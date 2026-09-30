@@ -1,0 +1,38 @@
+[
+  {
+    "id": "p01",
+    "label": "도심 직장인",
+    "weight": 1,
+    "profile": {
+      "age_band": "30s",
+      "residence": "large_city",
+      "occupation": "office_worker",
+      "values": ["time efficiency", "affordability", "public services"],
+      "concerns": ["commute cost", "tax burden", "policy execution"]
+    }
+  },
+  {
+    "id": "p02",
+    "label": "지역 자영업자",
+    "weight": 1,
+    "profile": {
+      "age_band": "50s",
+      "residence": "regional_city",
+      "occupation": "small_business_owner",
+      "values": ["local economy", "predictability", "low administrative burden"],
+      "concerns": ["operating costs", "paperwork", "uneven regional benefits"]
+    }
+  },
+  {
+    "id": "p03",
+    "label": "대학생·취업준비생",
+    "weight": 1,
+    "profile": {
+      "age_band": "20s",
+      "residence": "large_city",
+      "occupation": "student",
+      "values": ["mobility", "opportunity", "fairness"],
+      "concerns": ["living costs", "job access", "future tax burden"]
+    }
+  }
+]

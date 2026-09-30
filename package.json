@@ -1,0 +1,16 @@
+{
+  "name": "policy-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A reproducible policy-reaction simulator powered by fictional voter personas and Jev.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "simulate": "node src/simulate.mjs",
+    "simulate:offline": "node src/simulate.mjs --offline",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
