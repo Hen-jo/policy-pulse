@@ -1,104 +1,71 @@
-const state = { benefit: 78, cost: 34, coverage: 70 };
-
-const controls = ['benefit', 'cost', 'coverage'];
-const $ = (id) => document.getElementById(id);
-const districtMeta = {
-  '유성구': '연구·교육 생활권 · 표본 16명',
-  '서구': '행정·상업 생활권 · 표본 38명',
-  '중구': '도심 생활권 · 표본 16명',
-  '동구': '동부 생활권 · 표본 17명',
-  '대덕구': '산업·주거 생활권 · 표본 13명'
+const regionData = {
+  daejeon: { name: '대전광역시', baseline: 65, mix: [66, 66, 63] },
+  seoul: { name: '서울특별시', baseline: 66, mix: [68, 66, 63] },
+  busan: { name: '부산광역시', baseline: 60, mix: [61, 60, 59] },
+  daegu: { name: '대구광역시', baseline: 58, mix: [56, 58, 61] },
+  incheon: { name: '인천광역시', baseline: 63, mix: [65, 63, 61] },
+  gwangju: { name: '광주광역시', baseline: 68, mix: [71, 68, 62] },
+  sejong: { name: '세종특별자치시', baseline: 70, mix: [71, 70, 66] }
 };
 
-function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+const positiveWords = ['지원', '환급', '감면', '무료', '확대', '보장', '돌봄', '주거', '일자리', '의료', '청년', '교통', '교육', '장학', '보조'];
+const burdenWords = ['증세', '세금', '부담', '재정', '예산', '규제', '축소', '폐지', '인상', '의무'];
+const broadWords = ['모든', '전 시민', '전국민', '전 국민', '무상', '전면'];
 
-function updateRange(control) {
-  const element = $(control);
-  const value = Number(element.value);
-  state[control] = value;
-  element.style.setProperty('--range-value', `${((value - Number(element.min)) / (Number(element.max) - Number(element.min))) * 100}%`);
-  $(`${control}Value`).textContent = value;
+const $ = (id) => document.getElementById(id);
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+function countMatches(text, words) {
+  return words.reduce((count, word) => count + (text.includes(word) ? 1 : 0), 0);
 }
 
-function calculate() {
-  const { benefit, cost, coverage } = state;
-  const coverageBonus = (coverage - 50) * 0.08;
-  const base = 51 + benefit * 0.22 - cost * 0.12 + coverageBonus;
-  const progressive = clamp(base + 4 + benefit * 0.035 - cost * 0.02, 35, 92);
-  const center = clamp(base + 1 + benefit * 0.012 - cost * 0.015, 35, 92);
-  const conservative = clamp(base - 4 + benefit * 0.005 - cost * 0.045, 25, 90);
-  const overall = progressive * .53 + center * .07 + conservative * .40;
-  const low = clamp(Math.round(overall - 6 - cost * .025), 20, 87);
-  const high = clamp(Math.round(overall + 6 - cost * .01), 28, 95);
-  return { overall: Math.round(overall), progressive: Math.round(progressive), center: Math.round(center), conservative: Math.round(conservative), low, high };
+function analyze() {
+  const region = regionData[$('regionSelect').value];
+  const text = $('policyInput').value.trim();
+  const benefits = countMatches(text, positiveWords);
+  const burdens = countMatches(text, burdenWords);
+  const broad = countMatches(text, broadWords);
+  const hasPolicy = text.length > 5;
+  const lengthSignal = Math.min(1.8, Math.floor(text.length / 30) * .3);
+  const effect = hasPolicy ? clamp(benefits * 1.25 + lengthSignal - burdens * 1.1 - broad * .35, -10, 10) : 0;
+  const proposed = Math.round(region.baseline + effect);
+  const progressive = clamp(Math.round(region.mix[0] + effect * 1.15), 20, 90);
+  const center = clamp(Math.round(region.mix[1] + effect * .85), 20, 90);
+  const conservative = clamp(Math.round(region.mix[2] + effect * .55 - burdens * .3), 20, 90);
+  return { region, proposed, progressive, center, conservative };
 }
 
-function setText(id, value) { $(id).textContent = value; }
-
-function updateChart(result) {
-  const points = [
-    { x: 0, y: clamp(174 - result.overall * 2.05, 10, 174) },
-    { x: 112, y: clamp(174 - (result.overall - 5) * 2.05, 10, 174) },
-    { x: 225, y: clamp(174 - (result.overall - 2) * 2.05, 10, 174) },
-    { x: 340, y: clamp(174 - result.overall * 2.05, 10, 174) },
-    { x: 452, y: clamp(174 - (result.overall + 3) * 2.05, 10, 174) },
-    { x: 565, y: clamp(174 - (result.overall + 1) * 2.05, 10, 174) },
-    { x: 680, y: clamp(174 - (result.overall + 4) * 2.05, 10, 174) }
-  ];
-  const line = points.map((point, index) => `${index ? 'L' : 'M'} ${point.x} ${point.y}`).join(' ');
-  $('chartLine').setAttribute('d', line);
-  $('chartArea').setAttribute('d', `${line} L 680 190 L 0 190 Z`);
-  const current = points[3];
-  $('chartPoint').setAttribute('cx', current.x);
-  $('chartPoint').setAttribute('cy', current.y);
+function drawSparkline(result) {
+  const spread = result.proposed - result.region.baseline;
+  const points = [[0, 78], [105, 70], [210, 76], [315, 58], [420, clamp(58 - spread * 2, 18, 95)], [520, clamp(52 - spread * 3, 12, 95)], [620, clamp(46 - spread * 3.5, 10, 98)]];
+  const line = points.map(([x, y], index) => `${index ? 'L' : 'M'} ${x} ${y}`).join(' ');
+  $('sparkPath').setAttribute('d', line);
+  $('sparkFillPath').setAttribute('d', `${line} L 620 110 L 0 110 Z`);
+  $('sparkPoint').setAttribute('cx', points[6][0]);
+  $('sparkPoint').setAttribute('cy', points[6][1]);
 }
 
 function render() {
-  const result = calculate();
-  setText('supportRate', result.overall);
-  const delta = result.overall - 65.0;
-  setText('supportDelta', `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%p `);
-  $('supportDelta').insertAdjacentHTML('beforeend', '<span>현재 상태 대비</span>');
-  setText('confidenceText', `${result.low}–${result.high}%`);
-  $('confidenceBar').style.width = `${clamp(result.high - result.low + 28, 42, 82)}%`;
-  for (const group of ['progressive', 'center', 'conservative']) {
-    setText(`${group}Value`, result[group]);
-    $(`${group}Bar`).style.width = `${result[group]}%`;
-    const baseline = { progressive: 66, center: 66, conservative: 63 }[group];
-    const deltaValue = result[group] - baseline;
-    const deltaElement = $(`${group}Delta`);
-    deltaElement.textContent = `${deltaValue >= 0 ? '+' : '−'}${Math.abs(deltaValue)}`;
-    deltaElement.classList.toggle('negative', deltaValue < 0);
+  const result = analyze();
+  const current = result.region.baseline;
+  const delta = result.proposed - current;
+  $('resultRegion').textContent = `${result.region.name} 기준`;
+  $('currentRate').textContent = current;
+  $('proposedRate').textContent = result.proposed;
+  $('deltaRate').textContent = `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%p`;
+  $('deltaRate').style.color = delta >= 0 ? 'var(--green)' : 'var(--rose)';
+  const groups = [['progressive', result.progressive, result.region.mix[0]], ['center', result.center, result.region.mix[1]], ['conservative', result.conservative, result.region.mix[2]]];
+  for (const [name, proposed, baseline] of groups) {
+    $(`${name}Current`).textContent = baseline;
+    $(`${name}Proposed`).textContent = proposed;
+    const groupDelta = proposed - baseline;
+    const element = $(`${name}Delta`);
+    element.textContent = `${groupDelta >= 0 ? '+' : '−'}${Math.abs(groupDelta)}`;
+    element.classList.toggle('negative', groupDelta < 0);
   }
-  const group = state.cost > 60 ? '재정 민감 집단' : state.benefit > 82 ? '대중교통 이용 청년층' : '고정 통근자와 학생층';
-  setText('topGroup', group);
-  setText('topGroupText', state.cost > 60 ? '혜택이 유지돼도 재원 설명이 약하면 보수 성향과 고정소득층의 반응이 빠르게 낮아집니다.' : '비용 절감이 직접 체감되는 통근·통학 집단에서 반응이 가장 빠릅니다.');
-  updateChart(result);
+  drawSparkline(result);
 }
 
-for (const control of controls) {
-  $(control).addEventListener('input', () => { updateRange(control); render(); });
-  updateRange(control);
-}
-
-function selectDistrict(district) {
-  document.querySelectorAll('[data-district]').forEach((element) => element.classList.toggle('selected', element.dataset.district === district));
-  setText('mapDistrict', district);
-  setText('mapMeta', districtMeta[district]);
-}
-
-document.querySelectorAll('[data-district]').forEach((element) => {
-  element.addEventListener('click', () => selectDistrict(element.dataset.district));
-  element.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDistrict(element.dataset.district); }
-  });
-});
-
-$('runButton').addEventListener('click', () => {
-  const toast = $('toast');
-  toast.textContent = 'Jev 실행은 터미널에서 API 키와 함께 진행합니다.';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3400);
-});
-
+['regionSelect', 'policyInput'].forEach((id) => $(id).addEventListener('input', render));
+$('policyForm').addEventListener('submit', (event) => { event.preventDefault(); render(); });
 render();

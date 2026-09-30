@@ -48,10 +48,11 @@ npm run dashboard
 # open http://localhost:4173
 ```
 
-The dashboard is an interactive browser preview: changing benefit, cost, or
-coverage moves the support-rate chart and orientation breakdown immediately.
-It is intentionally labeled as a preview until a live Jev run replaces the
-deterministic browser estimate with a model response.
+The dashboard is an interactive browser preview: choose a region and type a
+policy sentence to see the current baseline, proposed support rate, and
+orientation breakdown update immediately. It is intentionally labeled as a
+preview until a live Jev run replaces the deterministic browser estimate with
+a model response.
 
 ```bash
 npm run test
