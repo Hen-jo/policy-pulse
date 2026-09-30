@@ -30,6 +30,13 @@ small experiment sample from accidentally treating each region as equally
 large. The snapshot is versioned by `as_of`; update it when running a new
 official release.
 
+The Daejeon demo also adds a synthetic political-profile layer. Its
+`progressive` / `center` / `conservative` prior is calibrated from the Daejeon
+results in the 22nd National Assembly district and proportional ballots. The
+profile is not a claim about a real person or a party membership. It is a
+deterministic, reproducible prior that Jev can weigh alongside the persona's
+demographics, interests, policy costs, and benefits.
+
 ## Run
 
 Node.js 20+ is required.
@@ -47,6 +54,10 @@ regional sample. For the current demo we use Daejeon:
 python scripts/extract-nemotron-local.py --province=대전 --count=100 --out=.cache/personas.daejeon-100.json
 PERSONAS_FILE=.cache/personas.daejeon-100.json JEV_BATCH_SIZE=20 JEV_ENV_FILE=/Users/jo/.config/jev-bot/.env npm run simulate
 ```
+
+The live result includes `simulation.by_orientation` so a policy can be
+compared across the calibrated synthetic groups instead of collapsing
+everything into one headline percentage.
 
 For a larger regional sample, use the adapter when the Hugging Face dataset
 server is available:
@@ -81,6 +92,12 @@ The simulator stores dataset, split, row index, and source URL for each record.
 Regional calibration uses the [Ministry of the Interior and Safety resident
 registration population statistics](https://jumin.mois.go.kr/agePpltStus.do).
 The checked-in snapshot is a simulation input, not an election forecast.
+
+Political-profile calibration uses the [National Election Commission's 22nd
+National Assembly election dataset](https://www.data.go.kr/data/15025527/fileData.do)
+and its [district/proportional party vote release](https://nec.go.kr/site/nec/ex/bbs/View.do?bcIdx=265654&cbIdx=1084).
+The party-to-orientation grouping is an explicit modeling choice in
+`data/election-benchmarks.daejeon.json`, not an official classification.
 
 ## License
 

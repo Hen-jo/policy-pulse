@@ -4,12 +4,15 @@ import { fileURLToPath } from 'node:url';
 import { aggregateResults } from './aggregate.mjs';
 import { calibratePersonaWeights } from './calibrate.mjs';
 import { judgePersonas, loadEnvFile } from './jev-client.mjs';
+import { calibratePersonaOrientations, summarizeOrientation } from './orientation.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const personasFile = process.env.PERSONAS_FILE || path.join(root, 'data/personas.nemotron-korea.json');
 const rawPersonas = JSON.parse(await fs.readFile(personasFile, 'utf8'));
 const populationTargets = JSON.parse(await fs.readFile(path.join(root, 'data/population-targets.json'), 'utf8'));
-const personas = calibratePersonaWeights(rawPersonas, populationTargets);
+const electionBenchmark = JSON.parse(await fs.readFile(path.join(root, 'data/election-benchmarks.daejeon.json'), 'utf8'));
+const weightedPersonas = calibratePersonaWeights(rawPersonas, populationTargets);
+const personas = calibratePersonaOrientations(weightedPersonas, electionBenchmark);
 const policies = JSON.parse(await fs.readFile(path.join(root, 'data/policies.json'), 'utf8'));
 const policy = policies[0];
 
@@ -21,7 +24,8 @@ if (process.argv.includes('--offline')) {
     mode: 'offline',
     message: 'Offline mode is a schema smoke test; live opinions require Jev.',
     policy: policy.id,
-    persona_count: personas.length
+    persona_count: personas.length,
+    orientation: summarizeOrientation(personas)
   }, null, 2));
   process.exit(0);
 }

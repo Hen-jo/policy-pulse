@@ -1,0 +1,58 @@
+{
+  "region": "대전광역시",
+  "as_of": "2024-04-10",
+  "description": "대전의 합성 정치성향 사전분포를 만들기 위한 선거결과 기준값",
+  "sources": [
+    {
+      "election": "제22대 국회의원선거 지역구",
+      "url": "https://www.data.go.kr/data/15025527/fileData.do",
+      "publisher": "중앙선거관리위원회"
+    },
+    {
+      "election": "제22대 국회의원선거 비례대표",
+      "url": "https://nec.go.kr/site/nec/ex/bbs/View.do?bcIdx=265654&cbIdx=1084",
+      "publisher": "중앙선거관리위원회"
+    }
+  ],
+  "modeling_notes": [
+    "정당명은 개인의 실제 정치성향이 아니라 시뮬레이션용 광역 성향군으로만 변환한다.",
+    "진보·보수로 직접 분류되지 않은 득표는 중도 성향군에 포함한다.",
+    "두 투표용지의 결과를 동일 가중치로 평균해 단일 선거의 우연한 효과를 줄인다."
+  ],
+  "party_family_mapping": {
+    "assembly-2024-district": {
+      "progressive": ["더불어민주당"],
+      "conservative": ["국민의힘"],
+      "center": ["그 밖의 정당·무소속 후보"]
+    },
+    "assembly-2024-proportional": {
+      "progressive": ["더불어민주연합", "조국혁신당"],
+      "conservative": ["국민의미래", "자유통일당"],
+      "center": ["그 밖의 정당"]
+    }
+  },
+  "elections": [
+    {
+      "id": "assembly-2024-district",
+      "label": "제22대 국회의원선거 지역구",
+      "weight": 0.5,
+      "valid_votes": 809204,
+      "orientation_votes": {
+        "progressive": 438720,
+        "conservative": 346208,
+        "center": 24276
+      }
+    },
+    {
+      "id": "assembly-2024-proportional",
+      "label": "제22대 국회의원선거 비례대표",
+      "weight": 0.5,
+      "valid_votes": 786252,
+      "orientation_votes": {
+        "progressive": 406727,
+        "conservative": 300570,
+        "center": 78955
+      }
+    }
+  ]
+}
