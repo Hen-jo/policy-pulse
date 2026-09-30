@@ -16,6 +16,26 @@ const count = Math.max(1, Math.min(100, Number(option('count', '12'))));
 const offset = Math.max(0, Number(option('offset', '0')));
 const output = option('out', path.join(root, 'data/personas.nemotron-korea.json'));
 const province = option('province', '').trim();
+const provinceAliases = {
+  서울특별시: '서울',
+  부산광역시: '부산',
+  대구광역시: '대구',
+  인천광역시: '인천',
+  광주광역시: '광주',
+  대전광역시: '대전',
+  울산광역시: '울산',
+  세종특별자치시: '세종',
+  경기도: '경기',
+  강원특별자치도: '강원',
+  충청북도: '충청북',
+  충청남도: '충청남',
+  전북특별자치도: '전북',
+  전라남도: '전라남',
+  경상북도: '경상북',
+  경상남도: '경상남',
+  제주특별자치도: '제주'
+};
+const provinceFilter = provinceAliases[province] || province;
 
 function normalize(value) {
   return String(value || '').replaceAll(' ', '').toLowerCase();
@@ -40,7 +60,7 @@ const batchSize = province ? 100 : count;
 for (let cursor = offset; matched.length < count && cursor < offset + 5000; cursor += batchSize) {
   const payload = await fetchRows(cursor, batchSize);
   for (const item of payload.rows) {
-    if (!province || normalize(item.row.province).includes(normalize(province))) matched.push(item);
+    if (!province || normalize(item.row.province).includes(normalize(provinceFilter))) matched.push(item);
     if (matched.length === count) break;
   }
 }

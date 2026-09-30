@@ -26,12 +26,22 @@ if (process.argv.includes('--offline')) {
   process.exit(0);
 }
 
-const result = await judgePersonas({ policy, personas });
-const aggregate = aggregateResults(personas, result.answers || {});
+const batchSize = Math.max(1, Number(process.env.JEV_BATCH_SIZE || 20));
+const batches = [];
+for (let index = 0; index < personas.length; index += batchSize) {
+  batches.push(await judgePersonas({ policy, personas: personas.slice(index, index + batchSize) }));
+}
+const answers = Object.assign({}, ...batches.map((batch) => batch.answers || {}));
+const aggregate = aggregateResults(personas, answers);
+const usage = batches.reduce((total, batch) => ({
+  input_tokens: total.input_tokens + (batch.usage?.input_tokens || 0),
+  output_tokens: total.output_tokens + (batch.usage?.output_tokens || 0)
+}), { input_tokens: 0, output_tokens: 0 });
 
 console.log(JSON.stringify({
-  model: result.model,
+  model: batches[0]?.model || null,
+  batch_count: batches.length,
   policy: { id: policy.id, title: policy.title },
   simulation: aggregate,
-  usage: result.usage || null
+  usage
 }, null, 2));

@@ -40,11 +40,12 @@ npm run personas:nvidia -- --count=12 --offset=100
 JEV_ENV_FILE=/Users/jo/.config/jev-bot/.env npm run simulate
 ```
 
-To run one region, the repository includes a provenance-preserving Gwangju
-smoke-test persona:
+To run one region, use the local Parquet shards and extract a reproducible
+regional sample. For the current demo we use Daejeon:
 
 ```bash
-PERSONAS_FILE=data/personas.gwangju.json JEV_ENV_FILE=/Users/jo/.config/jev-bot/.env npm run simulate
+python scripts/extract-nemotron-local.py --province=대전 --count=100 --out=.cache/personas.daejeon-100.json
+PERSONAS_FILE=.cache/personas.daejeon-100.json JEV_BATCH_SIZE=20 JEV_ENV_FILE=/Users/jo/.config/jev-bot/.env npm run simulate
 ```
 
 For a larger regional sample, use the adapter when the Hugging Face dataset
