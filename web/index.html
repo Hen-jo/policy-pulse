@@ -40,6 +40,34 @@
 
         <section class="control-room" aria-label="정책 시뮬레이션 작업 공간">
           <aside class="policy-editor">
+            <div class="region-map" aria-label="대전광역시 자치구 지도">
+              <div class="map-head"><div><span class="map-kicker">REGION / DAEJEON</span><strong>대전광역시</strong></div><span class="map-count-label">5개 자치구</span></div>
+              <svg class="daejeon-map" viewBox="0 0 320 245" role="img" aria-label="대전광역시 5개 자치구 개략도">
+                <path class="map-river" d="M25 133 C82 111 100 158 143 140 S216 102 290 119" />
+                <g class="district district-yuseong" data-district="유성구" tabindex="0" role="button" aria-label="유성구">
+                  <path d="M35 57 L128 25 L162 82 L125 126 L50 118 L27 77 Z" />
+                  <text x="86" y="77">유성구</text><text class="map-number" x="86" y="94">16명</text>
+                </g>
+                <g class="district district-daedeok" data-district="대덕구" tabindex="0" role="button" aria-label="대덕구">
+                  <path d="M160 32 L210 24 L266 67 L239 105 L176 93 Z" />
+                  <text x="211" y="62">대덕구</text><text class="map-number" x="211" y="79">13명</text>
+                </g>
+                <g class="district district-seogu" data-district="서구" tabindex="0" role="button" aria-label="서구">
+                  <path d="M44 119 L126 126 L146 177 L87 201 L42 166 Z" />
+                  <text x="91" y="151">서구</text><text class="map-number" x="91" y="168">38명</text>
+                </g>
+                <g class="district district-junggu" data-district="중구" tabindex="0" role="button" aria-label="중구">
+                  <path d="M126 126 L176 94 L198 147 L160 183 L146 177 Z" />
+                  <text x="158" y="137">중구</text><text class="map-number" x="158" y="153">16명</text>
+                </g>
+                <g class="district district-donggu" data-district="동구" tabindex="0" role="button" aria-label="동구">
+                  <path d="M198 147 L240 105 L271 78 L277 166 L221 215 L160 183 Z" />
+                  <text x="226" y="160">동구</text><text class="map-number" x="226" y="177">17명</text>
+                </g>
+              </svg>
+              <div class="map-footer"><div><span>선택 구역</span><strong id="mapDistrict">대전 전체</strong></div><span id="mapMeta">인구보정 표본 100명</span></div>
+              <p class="map-disclaimer">개략도 · Nemotron 합성 표본 분포</p>
+            </div>
             <div class="section-label"><span>01</span> 공약 설계</div>
             <label class="field-label" for="policyTitle">공약 제목</label>
             <input id="policyTitle" class="title-input" type="text" value="대중교통 정액 환급제" />

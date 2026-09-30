@@ -2,6 +2,13 @@ const state = { benefit: 78, cost: 34, coverage: 70 };
 
 const controls = ['benefit', 'cost', 'coverage'];
 const $ = (id) => document.getElementById(id);
+const districtMeta = {
+  '유성구': '연구·교육 생활권 · 표본 16명',
+  '서구': '행정·상업 생활권 · 표본 38명',
+  '중구': '도심 생활권 · 표본 16명',
+  '동구': '동부 생활권 · 표본 17명',
+  '대덕구': '산업·주거 생활권 · 표본 13명'
+};
 
 function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
 
@@ -73,6 +80,19 @@ for (const control of controls) {
   $(control).addEventListener('input', () => { updateRange(control); render(); });
   updateRange(control);
 }
+
+function selectDistrict(district) {
+  document.querySelectorAll('[data-district]').forEach((element) => element.classList.toggle('selected', element.dataset.district === district));
+  setText('mapDistrict', district);
+  setText('mapMeta', districtMeta[district]);
+}
+
+document.querySelectorAll('[data-district]').forEach((element) => {
+  element.addEventListener('click', () => selectDistrict(element.dataset.district));
+  element.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectDistrict(element.dataset.district); }
+  });
+});
 
 $('runButton').addEventListener('click', () => {
   const toast = $('toast');
