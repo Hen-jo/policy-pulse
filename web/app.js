@@ -32,20 +32,23 @@ function analyze() {
   const lengthSignal = Math.min(1.8, Math.floor(text.length / 30) * .3);
   const effect = hasPolicy ? clamp(benefits * 1.25 + lengthSignal - burdens * 1.1 - broad * .35, -10, 10) : 0;
   const proposed = Math.round(region.baseline + effect);
-  const progressive = clamp(Math.round(region.mix[0] + effect * 1.15), 20, 90);
-  const center = clamp(Math.round(region.mix[1] + effect * .85), 20, 90);
-  const conservative = clamp(Math.round(region.mix[2] + effect * .55 - burdens * .3), 20, 90);
-  return { region, proposed, progressive, center, conservative };
+  return {
+    region,
+    proposed,
+    yes: proposed,
+    no: 100 - proposed,
+    progressive: clamp(Math.round(region.mix[0] + effect * 1.15), 20, 90),
+    center: clamp(Math.round(region.mix[1] + effect * .85), 20, 90),
+    conservative: clamp(Math.round(region.mix[2] + effect * .55 - burdens * .3), 20, 90)
+  };
 }
 
-function drawSparkline(result) {
-  const spread = result.proposed - result.region.baseline;
-  const points = [[0, 78], [105, 70], [210, 76], [315, 58], [420, clamp(58 - spread * 2, 18, 95)], [520, clamp(52 - spread * 3, 12, 95)], [620, clamp(46 - spread * 3.5, 10, 98)]];
-  const line = points.map(([x, y], index) => `${index ? 'L' : 'M'} ${x} ${y}`).join(' ');
-  $('sparkPath').setAttribute('d', line);
-  $('sparkFillPath').setAttribute('d', `${line} L 620 110 L 0 110 Z`);
-  $('sparkPoint').setAttribute('cx', points[6][0]);
-  $('sparkPoint').setAttribute('cy', points[6][1]);
+function updateMap(region) {
+  $('mapHeading').textContent = region.name;
+  $('mapLabel').textContent = region.name;
+  if (!realMap || !regionMarker) return;
+  realMap.setView(region.coords, region.zoom, { animate: true });
+  regionMarker.setLatLng(region.coords).bindTooltip(region.name, { direction: 'top', offset: [0, -8] }).openTooltip();
 }
 
 function render() {
@@ -57,6 +60,12 @@ function render() {
   $('proposedRate').textContent = result.proposed;
   $('deltaRate').textContent = `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}%p`;
   $('deltaRate').style.color = delta >= 0 ? 'var(--green)' : 'var(--rose)';
+  $('yesRate').textContent = result.yes;
+  $('noRate').textContent = result.no;
+  $('yesCount').textContent = `${result.yes}명`;
+  $('noCount').textContent = `${result.no}명`;
+  $('yesBar').style.width = `${result.yes}%`;
+  $('noBar').style.width = `${result.no}%`;
   const groups = [['progressive', result.progressive, result.region.mix[0]], ['center', result.center, result.region.mix[1]], ['conservative', result.conservative, result.region.mix[2]]];
   for (const [name, proposed, baseline] of groups) {
     $(`${name}Current`).textContent = baseline;
@@ -66,15 +75,7 @@ function render() {
     element.textContent = `${groupDelta >= 0 ? '+' : '−'}${Math.abs(groupDelta)}`;
     element.classList.toggle('negative', groupDelta < 0);
   }
-  drawSparkline(result);
   updateMap(result.region);
-}
-
-function updateMap(region) {
-  $('mapLabel').textContent = `${region.name} 지도`;
-  if (!realMap || !regionMarker) return;
-  realMap.setView(region.coords, region.zoom, { animate: true });
-  regionMarker.setLatLng(region.coords).bindTooltip(region.name, { direction: 'top', offset: [0, -8] }).openTooltip();
 }
 
 document.querySelectorAll('.region-option').forEach((button) => {
@@ -85,7 +86,7 @@ document.querySelectorAll('.region-option').forEach((button) => {
   });
 });
 
-['policyInput'].forEach((id) => $(id).addEventListener('input', render));
+$('policyInput').addEventListener('input', render);
 $('policyForm').addEventListener('submit', (event) => { event.preventDefault(); render(); });
 
 function initMap() {
